@@ -1,0 +1,10 @@
+{
+  "name": "NICE DCV",
+  "description": "NICE DCV integration with GNOME Shell",
+  "uuid": "nice-dcv@amazon.com",
+  "shell-version": [
+    "42"
+  ],
+  "session-modes":  [ "gdm", "unlock-dialog" ]
+}
+
