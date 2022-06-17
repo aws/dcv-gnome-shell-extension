@@ -1,12 +1,15 @@
-## My Project
+## dcv-gnome-shell-extension
 
-TODO: Fill this README out!
+A GNOME Shell extension to provide functionalities in GNOME Shell that are required
+by NICE DCV.
 
-Be sure to:
+NICE DCV is a high-performance remote display protocol that provides customers with
+a secure way to deliver remote desktops and application streaming from any cloud or
+data center to any device, over varying network conditions.
 
-* Change the title in this README
-* Edit your repository description on GitHub
-* Write in your license below and create a LICENSE file
+This extension provides the following features:
+
+ - Single Sign On
 
 ## Security
 
@@ -14,5 +17,5 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 ## License
 
-This library is licensed under the LICENSE NAME HERE License.
+This library is licensed under the GPLv2 License.
 
