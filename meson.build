@@ -1,6 +1,6 @@
 project(
   'dcv-gnome-shell-extension',
-  version : '1.0',
+  version : '42.0',
   license: 'GPLv2'
 )
 
