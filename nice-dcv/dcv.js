@@ -23,8 +23,8 @@ const Gio = imports.gi.Gio;
 const Signals = imports.signals;
 const Credential = imports.gdm.credentialManager;
 
-const dbusPath = '/com/nicesoftware/dcvagent/Credentials';
-const dbusInterface = 'com.nicesoftware.dcvagent.Credentials';
+const dbusPath = '/com/nicesoftware/dcvauthenticator/Credentials';
+const dbusInterface = 'com.nicesoftware.dcvauthenticator.Credentials';
 
 var SERVICE_NAME = 'dcv-graphical-sso';
 
@@ -72,4 +72,3 @@ function getDcvCredentialsManager() {
 
     return _dcvCredentialsManager;
 }
-
