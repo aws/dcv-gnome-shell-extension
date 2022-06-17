@@ -11,6 +11,10 @@ This extension provides the following features:
 
  - Single Sign On
 
+### Disclaimer
+
+This is still work in progress and should not be used with the current version of NICE DCV.
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
