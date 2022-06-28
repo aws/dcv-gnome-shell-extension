@@ -5,6 +5,6 @@
   "shell-version": [
     "42"
   ],
-  "session-modes":  [ "gdm", "unlock-dialog" ]
+  "session-modes":  [ "gdm", "unlock-dialog", "user" ]
 }
 
