@@ -23,8 +23,8 @@ const Gio = imports.gi.Gio;
 const Signals = imports.signals;
 const Credential = imports.gdm.credentialManager;
 
-const dbusPath = '/com/nicesoftware/dcvauthenticator/Credentials';
-const dbusInterface = 'com.nicesoftware.dcvauthenticator.Credentials';
+const dbusPath = '/com/nicesoftware/DcvAuthenticator';
+const dbusInterface = 'com.nicesoftware.DcvAuthenticator';
 
 var SERVICE_NAME = 'dcv-graphical-sso';
 
