@@ -119,6 +119,7 @@ class Extension {
 }
 
 function init() {
+    Dcv.getDcvCredentialsManager();
     return new Extension();
 }
 
