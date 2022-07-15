@@ -110,11 +110,13 @@ class Extension {
     enable() {
         GdmUtil.ShellUserVerifier = DcvShellUserVerifier;
         GdmAuthPrompt.AuthPrompt = DcvAuthPrompt;
+        log(`${Me.metadata.name} enabled`);
     }
 
     disable() {
         GdmUtil.ShellUserVerifier = this._originalShellUserVerifier;
         GdmAuthPrompt.AuthPrompt = this._originalAuthPrompt;
+        log(`${Me.metadata.name} disabled`);
     }
 }
 
