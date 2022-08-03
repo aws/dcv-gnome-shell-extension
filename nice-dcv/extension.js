@@ -39,6 +39,7 @@ let DcvShellUserVerifier = class DcvShellUserVerifier extends GdmUtil.ShellUserV
         super(client, params);
 
         let dcvCredentialManager = Dcv.getDcvCredentialsManager();
+        this._credentialManagers[Dcv.SERVICE_NAME] = dcvCredentialManager;
         if (dcvCredentialManager.token) {
             this._onCredentialManagerAuthenticated(dcvCredentialManager,
                                                    dcvCredentialManager.token);
@@ -47,8 +48,6 @@ let DcvShellUserVerifier = class DcvShellUserVerifier extends GdmUtil.ShellUserV
         dcvCredentialManager.connectObject('user-authenticated',
                                            this._onCredentialManagerAuthenticated.bind(this),
                                            this);
-
-        this._credentialManagers[Dcv.SERVICE_NAME] = dcvCredentialManager;
     }
 };
 
