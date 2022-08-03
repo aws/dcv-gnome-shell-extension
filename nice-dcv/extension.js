@@ -108,6 +108,7 @@ class Extension {
     }
 
     enable() {
+        Dcv.getDcvCredentialsManager();
         GdmUtil.ShellUserVerifier = DcvShellUserVerifier;
         GdmAuthPrompt.AuthPrompt = DcvAuthPrompt;
         log(`${Me.metadata.name} enabled`);
@@ -121,7 +122,6 @@ class Extension {
 }
 
 function init() {
-    Dcv.getDcvCredentialsManager();
     return new Extension();
 }
 
