@@ -23,6 +23,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const GdmUtil = imports.gdm.util;
 const GdmAuthPrompt = imports.gdm.authPrompt;
 const GObject = imports.gi.GObject;
+const Main = imports.ui.main;
 const OVirt = imports.gdm.oVirt;
 const Vmware = imports.gdm.vmware;
 
@@ -108,13 +109,24 @@ class Extension {
     }
 
     enable() {
-        Dcv.getDcvCredentialsManager();
+        let manager = Dcv.getDcvCredentialsManager();
         GdmUtil.ShellUserVerifier = DcvShellUserVerifier;
         GdmAuthPrompt.AuthPrompt = DcvAuthPrompt;
+        manager.connectObject('user-authenticated',
+                              () => {
+                                  if (!Main.screenShield)
+                                      return;
+
+                                  if (Main.screenShield._isLocked)
+                                      Main.screenShield._activateDialog();
+                              },
+                              this);
         log(`${Me.metadata.name} enabled`);
     }
 
     disable() {
+        let manager = Dcv.getDcvCredentialsManager();
+        manager.disconnectObject(this);
         GdmUtil.ShellUserVerifier = this._originalShellUserVerifier;
         GdmAuthPrompt.AuthPrompt = this._originalAuthPrompt;
         log(`${Me.metadata.name} disabled`);
