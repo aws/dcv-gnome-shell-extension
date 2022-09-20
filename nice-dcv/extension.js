@@ -103,8 +103,12 @@ let DcvAuthPrompt = GObject.registerClass(class DcvAuthPrompt extends GdmAuthPro
 
 class Extension {
     constructor() {
+        this._remoteAccessController = global.backend.get_remote_access_controller();
+
         this._originalShellUserVerifier = GdmUtil.ShellUserVerifier;
         this._originalAuthPrompt = GdmAuthPrompt.AuthPrompt;
+        this._originalInhibit = this._remoteAccessController.inhibit_remote_access;
+        this._originalUninhibit = this._remoteAccessController.uninhibit_remote_access;
     }
 
     enable() {
@@ -120,6 +124,10 @@ class Extension {
                                       Main.screenShield._activateDialog();
                               },
                               this);
+
+        this._remoteAccessController.inhibit_remote_access = () => {};
+        this._remoteAccessController.uninhibit_remote_access = () => {};
+
         log(`${Me.metadata.name} enabled`);
     }
 
@@ -128,6 +136,10 @@ class Extension {
         manager.disconnectObject(this);
         GdmUtil.ShellUserVerifier = this._originalShellUserVerifier;
         GdmAuthPrompt.AuthPrompt = this._originalAuthPrompt;
+
+        this._remoteAccessController.inhibit_remote_access = this._originalInhibit;
+        this._remoteAccessController.uninhibit_remote_access = this._originalUninhibit;
+
         log(`${Me.metadata.name} disabled`);
     }
 }
