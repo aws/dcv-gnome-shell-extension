@@ -54,6 +54,8 @@ class Extension {
     enable() {
         GdmUtil.ShellUserVerifier = DcvShellUserVerifier;
 
+        // FIXME: Remove this code once we have headless sessions.
+        this._remoteAccessController.uninhibit_remote_access();
         this._remoteAccessController.inhibit_remote_access = () => {};
         this._remoteAccessController.uninhibit_remote_access = () => {};
 
