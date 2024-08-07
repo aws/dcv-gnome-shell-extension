@@ -20,7 +20,6 @@
 /* exported getDcvCredentialsManager */
 
 const Gio = imports.gi.Gio;
-const Signals = imports.signals;
 const Credential = imports.gdm.credentialManager;
 
 const dbusName = 'com.nicesoftware.DcvServer'
@@ -65,7 +64,6 @@ var DcvCredentialsManager = class DcvCredentialsManager extends Credential.Crede
             });
     }
 };
-Signals.addSignalMethods(DcvCredentialsManager.prototype);
 
 function getDcvCredentialsManager() {
     if (!_dcvCredentialsManager)
