@@ -21,18 +21,10 @@
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const GdmUtil = imports.gdm.util;
-const GdmAuthPrompt = imports.gdm.authPrompt;
-const GObject = imports.gi.GObject;
 const Main = imports.ui.main;
-const OVirt = imports.gdm.oVirt;
-const Vmware = imports.gdm.vmware;
 
 const Me = ExtensionUtils.getCurrentExtension();
 const Dcv = Me.imports.dcv;
-
-const AuthPromptMode = GdmAuthPrompt.AuthPromptMode;
-const AuthPromptStatus = GdmAuthPrompt.AuthPromptStatus;
-const BeginRequestType = GdmAuthPrompt.BeginRequestType;
 
 let DcvShellUserVerifier = class DcvShellUserVerifier extends GdmUtil.ShellUserVerifier {
     constructor(client, params) {
