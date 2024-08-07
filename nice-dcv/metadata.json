@@ -3,7 +3,7 @@
   "description": "NICE DCV integration with GNOME Shell",
   "uuid": "nice-dcv@amazon.com",
   "shell-version": [
-    "44"
+    "46"
   ],
   "session-modes":  [ "gdm", "unlock-dialog", "user" ]
 }

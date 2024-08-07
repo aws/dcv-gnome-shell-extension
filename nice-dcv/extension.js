@@ -17,34 +17,49 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/gpl-2.0.html>.
  */
 
-/* exported init */
+import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+import * as AuthPrompt from 'resource:///org/gnome/shell/gdm/authPrompt.js';
+import * as GdmUtil from 'resource:///org/gnome/shell/gdm/util.js';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const GdmUtil = imports.gdm.util;
-const Main = imports.ui.main;
-
-const Me = ExtensionUtils.getCurrentExtension();
-const Dcv = Me.imports.dcv;
+import * as Dcv from './dcv.js';
 
 let DcvShellUserVerifier = class DcvShellUserVerifier extends GdmUtil.ShellUserVerifier {
     constructor(client, params) {
         super(client, params);
-
         this.addCredentialManager(Dcv.SERVICE_NAME, Dcv.getDcvCredentialsManager());
     }
 };
 
-class Extension {
-    constructor() {
+function _createDcvUserVerifier(gdmClient, params) {
+    return new DcvShellUserVerifier(gdmClient, params);
+}
+
+export default class DcvExtension extends Extension {
+    constructor(metadata) {
+        super(metadata);
+
+        if (AuthPrompt.AuthPrompt.prototype._createUserVerifier === undefined) {
+            this._supported = false;
+            return;
+        }
+
+        this._supported = true;
         this._remoteAccessController = global.backend.get_remote_access_controller();
 
-        this._originalShellUserVerifier = GdmUtil.ShellUserVerifier;
+        this._originalCreateUserVerifier = AuthPrompt.AuthPrompt.prototype._createUserVerifier;
         this._originalInhibit = this._remoteAccessController.inhibit_remote_access;
         this._originalUninhibit = this._remoteAccessController.uninhibit_remote_access;
     }
 
     enable() {
-        GdmUtil.ShellUserVerifier = DcvShellUserVerifier;
+        if (!this._supported) {
+            Main.notifyError(`Unable to load '${this.metadata.name}'`,
+                             "The extension needs a newer GNOME Shell version");
+            return;
+        }
+
+        AuthPrompt.AuthPrompt.prototype._createUserVerifier = _createDcvUserVerifier;
 
         // FIXME: Remove this code once we have headless sessions.
         this._remoteAccessController.uninhibit_remote_access();
@@ -55,11 +70,15 @@ class Extension {
             Main.screenShield.addCredentialManager(Dcv.SERVICE_NAME, Dcv.getDcvCredentialsManager());
         }
 
-        log(`${Me.metadata.name} enabled`);
+        console.log(`${this.metadata.name} enabled`);
     }
 
     disable() {
-        GdmUtil.ShellUserVerifier = this._originalShellUserVerifier;
+        if (!this._supported) {
+            return;
+        }
+
+        AuthPrompt.AuthPrompt.prototype._createUserVerifier = this._originalCreateUserVerifier;
         this._remoteAccessController.inhibit_remote_access = this._originalInhibit;
         this._remoteAccessController.uninhibit_remote_access = this._originalUninhibit;
 
@@ -67,11 +86,7 @@ class Extension {
             Main.screenShield.removeCredentialManager(Dcv.SERVICE_NAME);
         }
 
-        log(`${Me.metadata.name} disabled`);
+        console.log(`${this.metadata.name} disabled`);
     }
-}
-
-function init() {
-    return new Extension();
 }
 

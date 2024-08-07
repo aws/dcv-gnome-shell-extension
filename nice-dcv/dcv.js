@@ -17,16 +17,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/gpl-2.0.html>.
  */
 
-/* exported getDcvCredentialsManager */
-
-const Gio = imports.gi.Gio;
-const Credential = imports.gdm.credentialManager;
+import Gio from 'gi://Gio';
+import * as Credential from 'resource:///org/gnome/shell/gdm/credentialManager.js';
 
 const dbusName = 'com.nicesoftware.DcvServer'
 const dbusPath = '/com/nicesoftware/DcvServer';
 const dbusInterface = 'com.nicesoftware.DcvServer.Credentials';
 
-var SERVICE_NAME = 'dcv-graphical-sso';
+export const SERVICE_NAME = 'dcv-graphical-sso';
 
 const DcvCredentialsIface = `<node>
 <interface name="${dbusInterface}">
@@ -65,7 +63,10 @@ var DcvCredentialsManager = class DcvCredentialsManager extends Credential.Crede
     }
 };
 
-function getDcvCredentialsManager() {
+/**
+ * @returns {DcvCredentialsManager}
+ */
+export function getDcvCredentialsManager() {
     if (!_dcvCredentialsManager)
         _dcvCredentialsManager = new DcvCredentialsManager();
 
