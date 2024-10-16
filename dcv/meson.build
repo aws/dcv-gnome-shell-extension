@@ -5,4 +5,4 @@ sources = files(
   'stylesheet.css',
 )
 
-install_data(sources, install_dir: shellextensiondir / 'nice-dcv@amazon.com')
+install_data(sources, install_dir: shellextensiondir / 'dcv@amazon.com')
