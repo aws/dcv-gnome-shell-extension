@@ -1,8 +1,8 @@
 ## dcv-gnome-shell-extension
 
-A GNOME Shell extension to provide functionalities required by NICE DCV.
+A GNOME Shell extension to provide functionalities required by Amazon DCV.
 
-NICE DCV is a high-performance remote display protocol that provides customers with
+Amazon DCV is a high-performance remote display protocol that provides customers with
 a secure way to deliver remote desktops and application streaming from any cloud or
 data center to any device, over varying network conditions.
 

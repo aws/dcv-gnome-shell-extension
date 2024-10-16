@@ -1,0 +1,10 @@
+{
+  "name": "Amazon DCV",
+  "description": "Amazon DCV integration with GNOME Shell",
+  "uuid": "dcv@amazon.com",
+  "shell-version": [
+    "46"
+  ],
+  "session-modes":  [ "gdm", "unlock-dialog", "user" ]
+}
+

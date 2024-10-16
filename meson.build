@@ -7,4 +7,4 @@ project(
 datadir = get_option('datadir')
 shellextensiondir = datadir / 'gnome-shell' / 'extensions'
 
-subdir('nice-dcv')
+subdir('dcv')
