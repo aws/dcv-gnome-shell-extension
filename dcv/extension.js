@@ -40,6 +40,7 @@ export default class DcvExtension extends Extension {
         super(metadata);
 
         if (AuthPrompt.AuthPrompt.prototype._createUserVerifier === undefined) {
+            console.log(`${this.metadata.name} not supported`);
             this._supported = false;
             return;
         }
