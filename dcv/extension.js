@@ -21,26 +21,35 @@ import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as AuthPrompt from 'resource:///org/gnome/shell/gdm/authPrompt.js';
 import * as GdmUtil from 'resource:///org/gnome/shell/gdm/util.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
+
+const SystemdLoginSessionIface = `
+<node>
+<interface name="org.freedesktop.login1.Session">
+  <property name="Id" type="s" access="read"/>
+  <property name="Remote" type="b" access="read"/>
+</interface>
+</node>
+`;
+
+const SystemdLoginSession = Gio.DBusProxy.makeProxyWrapper(SystemdLoginSessionIface);
 
 import * as Dcv from './dcv.js';
 
 let DcvShellUserVerifier = class DcvShellUserVerifier extends GdmUtil.ShellUserVerifier {
-    constructor(client, params) {
+    constructor(client, params, sessionId) {
         super(client, params);
-        this.addCredentialManager(Dcv.SERVICE_NAME, Dcv.getDcvCredentialsManager());
+        this.addCredentialManager(Dcv.SERVICE_NAME, Dcv.getDcvCredentialsManager(sessionId));
     }
 };
-
-function _createDcvUserVerifier(gdmClient, params) {
-    return new DcvShellUserVerifier(gdmClient, params);
-}
 
 export default class DcvExtension extends Extension {
     constructor(metadata) {
         super(metadata);
 
         if (AuthPrompt.AuthPrompt.prototype._createUserVerifier === undefined) {
-            console.log(`${this.metadata.name} not supported`);
+            console.log(`${this.metadata.name}: Not supported`);
             this._supported = false;
             return;
         }
@@ -53,6 +62,36 @@ export default class DcvExtension extends Extension {
         this._originalUninhibit = this._remoteAccessController.uninhibit_remote_access;
     }
 
+    _uninhibitRemoteAccess() {
+        this._remoteAccessController.uninhibit_remote_access();
+        this._remoteAccessController.inhibit_remote_access = () => {};
+        this._remoteAccessController.uninhibit_remote_access = () => {};
+    }
+
+    _inhibitRemoteAccess() {
+        this._remoteAccessController.inhibit_remote_access();
+        this._remoteAccessController.inhibit_remote_access = this._originalInhibit;
+        this._remoteAccessController.uninhibit_remote_access = this._originalUninhibit;
+    }
+
+    /* We should use LoginManager::getCurrentSessionProxy() from GNOME Shell for simplicity but it is
+     * buggy. Use our own implementation until this commit is ubiquitous:
+     * https://gitlab.gnome.org/GNOME/gnome-shell/-/commit/5db3a2b7bcfebdcc71038df890ae44308c98b95e
+     */
+    async getCurrentSessionProxy() {
+        if (this._currentSession)
+            return this._currentSession;
+
+        try {
+            this._currentSession = await SystemdLoginSession.newAsync(
+                Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1/session/auto');
+            return this._currentSession;
+        } catch (error) {
+            console.error(`${this.metadata.name}: Could not get a proxy for the current session: ${error}`);
+            return null;
+        }
+    }
+
     enable() {
         if (!this._supported) {
             Main.notifyError(`Unable to load '${this.metadata.name}'`,
@@ -60,18 +99,32 @@ export default class DcvExtension extends Extension {
             return;
         }
 
-        AuthPrompt.AuthPrompt.prototype._createUserVerifier = _createDcvUserVerifier;
+        this.getCurrentSessionProxy().then(session => {
+            if (!session) {
+                console.error(`${this.metadata.name}: Could not get session proxy`);
+                return;
+            }
 
-        // FIXME: Remove this code once we have headless sessions.
-        this._remoteAccessController.uninhibit_remote_access();
-        this._remoteAccessController.inhibit_remote_access = () => {};
-        this._remoteAccessController.uninhibit_remote_access = () => {};
+            const sessionId = session.Id;
+            const sessionRemote = session.Remote;
+            console.log(`${this.metadata.name}: Session '${sessionId}', Remote '${sessionRemote}'`);
 
-        if (Main.screenShield) {
-            Main.screenShield.addCredentialManager(Dcv.SERVICE_NAME, Dcv.getDcvCredentialsManager());
-        }
+            if (!sessionRemote) {
+                // For headless sessions we don't need to uninhibit remote access
+                // because it is allowed by default.
+                this._uninhibitRemoteAccess();
+            }
 
-        console.log(`${this.metadata.name} enabled`);
+            AuthPrompt.AuthPrompt.prototype._createUserVerifier = (gdmClient, params) => {
+                return new DcvShellUserVerifier(gdmClient, params, sessionId);
+            };
+
+            if (Main.screenShield) {
+                Main.screenShield.addCredentialManager(Dcv.SERVICE_NAME, Dcv.getDcvCredentialsManager(sessionId));
+            }
+
+            console.log(`${this.metadata.name}: Enabled`);
+        });
     }
 
     disable() {
@@ -80,14 +133,12 @@ export default class DcvExtension extends Extension {
         }
 
         AuthPrompt.AuthPrompt.prototype._createUserVerifier = this._originalCreateUserVerifier;
-        this._remoteAccessController.inhibit_remote_access = this._originalInhibit;
-        this._remoteAccessController.uninhibit_remote_access = this._originalUninhibit;
+        this._inhibitRemoteAccess();
 
         if (Main.screenShield) {
             Main.screenShield.removeCredentialManager(Dcv.SERVICE_NAME);
         }
 
-        console.log(`${this.metadata.name} disabled`);
+        console.log(`${this.metadata.name}: Disabled`);
     }
 }
-
