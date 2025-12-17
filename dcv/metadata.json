@@ -2,6 +2,6 @@
   "name": "Amazon DCV",
   "description": "Amazon DCV integration with GNOME Shell",
   "uuid": "dcv@amazon.com",
-  "shell-version": [ "46", "47", "48" ],
+  "shell-version": [ "46", "47", "48", "49" ],
   "session-modes":  [ "gdm", "unlock-dialog", "user" ]
 }
