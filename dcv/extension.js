@@ -65,12 +65,18 @@ export default class DcvExtension extends Extension {
         this._remoteAccessController.uninhibit_remote_access();
         this._remoteAccessController.inhibit_remote_access = () => {};
         this._remoteAccessController.uninhibit_remote_access = () => {};
+        this._remoteAccessUninhibited = true;
     }
 
     _inhibitRemoteAccess() {
+        if (!this._remoteAccessUninhibited) {
+            return;
+        }
+
         this._remoteAccessController.inhibit_remote_access();
         this._remoteAccessController.inhibit_remote_access = this._originalInhibit;
         this._remoteAccessController.uninhibit_remote_access = this._originalUninhibit;
+        this._remoteAccessUninhibited = false;
     }
 
     /* We should use LoginManager::getCurrentSessionProxy() from GNOME Shell for simplicity but it is
