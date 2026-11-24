@@ -104,7 +104,12 @@ export default class DcvExtension extends Extension {
             return;
         }
 
+        this._enabled = true;
         this.getCurrentSessionProxy().then(session => {
+            if (!this._enabled) {
+                return;
+            }
+
             if (!session) {
                 console.error(`${this.metadata.name}: Could not get session proxy`);
                 return;
@@ -137,6 +142,7 @@ export default class DcvExtension extends Extension {
             return;
         }
 
+        this._enabled = false;
         AuthPrompt.AuthPrompt.prototype._createUserVerifier = this._originalCreateUserVerifier;
         this._inhibitRemoteAccess();
 
