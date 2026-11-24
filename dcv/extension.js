@@ -22,7 +22,6 @@ import * as AuthPrompt from 'resource:///org/gnome/shell/gdm/authPrompt.js';
 import * as GdmUtil from 'resource:///org/gnome/shell/gdm/util.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import Gio from 'gi://Gio';
-import GLib from 'gi://GLib';
 
 const SystemdLoginSessionIface = `
 <node>
