@@ -20,7 +20,7 @@
 import Gio from 'gi://Gio';
 import * as Credential from 'resource:///org/gnome/shell/gdm/credentialManager.js';
 
-const dbusName = 'com.nicesoftware.DcvServer'
+const dbusName = 'com.nicesoftware.DcvServer';
 const dbusPath = '/com/nicesoftware/DcvServer';
 const dbusInterface = 'com.nicesoftware.DcvServer.Credentials';
 
@@ -39,7 +39,7 @@ const DcvCredentialsInfo = Gio.DBusInterfaceInfo.new_for_xml(DcvCredentialsIface
 let _dcvCredentialsManagers = new Map();
 
 function DcvCredentials() {
-    var self = new Gio.DBusProxy({
+    const self = new Gio.DBusProxy({
         g_connection: Gio.DBus.system,
         g_interface_name: DcvCredentialsInfo.name,
         g_interface_info: DcvCredentialsInfo,
@@ -51,7 +51,7 @@ function DcvCredentials() {
     return self;
 }
 
-var DcvCredentialsManager = class DcvCredentialsManager extends Credential.CredentialManager {
+const DcvCredentialsManager = class DcvCredentialsManager extends Credential.CredentialManager {
     constructor(sessionId) {
         super(SERVICE_NAME);
         this._sessionId = sessionId;
