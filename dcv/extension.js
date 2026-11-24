@@ -27,7 +27,6 @@ const SystemdLoginSessionIface = `
 <node>
 <interface name="org.freedesktop.login1.Session">
   <property name="Id" type="s" access="read"/>
-  <property name="Remote" type="b" access="read"/>
 </interface>
 </node>
 `;
@@ -116,10 +115,10 @@ export default class DcvExtension extends Extension {
             }
 
             const sessionId = session.Id;
-            const sessionRemote = session.Remote;
-            console.log(`${this.metadata.name}: Session '${sessionId}', Remote '${sessionRemote}'`);
+            const headless = global.backend.is_headless();
+            console.log(`${this.metadata.name}: Session '${sessionId}', Headless '${headless}'`);
 
-            if (!sessionRemote) {
+            if (!headless) {
                 // For headless sessions we don't need to uninhibit remote access
                 // because it is allowed by default.
                 this._uninhibitRemoteAccess();
